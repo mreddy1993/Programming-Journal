@@ -12,7 +12,6 @@ class JournalEntry():
     def print_record(self):
         return self._entry_num, self._title, self._text
 
-#url = "postgres://onwjxrpt:bjnHXy30sMOxDhnVVb4t4lEnDZ5buNq8@jelani.db.elephantsql.com/onwjxrpt"
 
 
 exit = False
@@ -21,8 +20,10 @@ while not exit:
     connection = psycopg2.connect(url)
     cursor = connection.cursor()
     os.system('clear' if os.name == "posix" else 'cls')
-    number_of_posts = len(entries)+1
-    start_screen = tkinter.Label(text = "Welcome to the Journal\n Please select one of the following options: 1)Add a New Entry \n2)View an Entry\n3)Exit" )
+    query = "SELECT count(*) FROM entries"
+    cursor.execute(query)
+    number_of_posts = cursor.fetchall()[0]  
+    number_of_posts = number_of_posts[0] + 1
     print("Welcome to the Journal\n")
     print("Please select one of the following options: ")
     print("1)Add a New Entry \n2)View an Entry\n3)Exit")
@@ -48,7 +49,8 @@ while not exit:
             query = "SELECT * FROM entries"
             cursor.execute(query)
             entry_list = cursor.fetchall()    
-            print(entry_list)
+            for items in entry_list:
+                print(items)
         finally:
             cursor.close()
             connection.close()
